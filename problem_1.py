@@ -13,7 +13,6 @@ class LRU_Cache(object):
                 del self.data[key]
                 return
 
-
     def get(self, key):
         if key in self.data:
             count = self.data[key][0] + 1

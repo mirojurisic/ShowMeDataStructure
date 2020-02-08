@@ -2,7 +2,8 @@ import os
 
 
 def find_files(suffix, path):
-    file_list = [os.path.join(path, x) for x in os.listdir(path) if os.path.isfile(os.path.join(path, x)) if x.endswith(suffix)]
+    file_list = [os.path.join(path, x) for x in os.listdir(path) if os.path.isfile(os.path.join(path, x)) if
+                 x.endswith(suffix)]
     dir_list = [os.path.join(path, x) for x in os.listdir(path) if os.path.isdir(os.path.join(path, x))]
 
     if len(dir_list) == 0:
@@ -30,5 +31,7 @@ def find_files(suffix, path):
     """
     return file_list
 
-print(find_files(".c", "./testdir/"))
 
+print(find_files("", "./")) # prints all files
+print(find_files(".c", "./testdir/")) # prints all c files
+print(find_files("hh", ".")) # no such file format

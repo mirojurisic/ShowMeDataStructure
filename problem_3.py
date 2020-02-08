@@ -87,7 +87,7 @@ class Node:
 
 
 def merge_nodes(n1, n2):
-    above = Node("PP", n1.freq + n2.freq)
+    above = Node(None, n1.freq + n2.freq)
     above.left = n1
     above.right = n2
     return above
@@ -111,6 +111,8 @@ def get_frequency(data):
 
 
 def building_tree(data):
+    if len(data) == 1:
+        return data[0]
     while len(data) > 1:
         n = merge_nodes(data[0], data[1])
         data.pop(0)
@@ -167,13 +169,21 @@ def encode(data, table):
 
 
 def huffman_encoding(data):
-    frequency = get_frequency(data)
-    frequency = build_nodes(frequency)
+    if len(data) < 1:
+        print("it does not make sense, nothing to encode")
+        exit()
+    frequency = get_frequency(data)  # gets frequency of each char
+    if len(frequency) <= 1:
+        key = list(frequency.keys())[0]
+        frequency[key] = '1'
+        return encode(data, frequency), frequency
+    frequency = build_nodes(frequency)  # builds nodes by assigning char and freq values
     frequency = sorted(frequency, key=lambda x: x.freq)
     tree = Tree()
-    tree.root = building_tree(frequency)
-    table = building_table(tree)
-    encode_data = encode(data, table)
+    tree.root = building_tree(
+        frequency)  # builds tree by pairing two nodes with the lowest frequencies until only one node is left which is root node
+    table = building_table(tree)  # traverse the tree and sets code to each node
+    encode_data = encode(data, table)  # using table as a hash map for characters data are encoded
     return encode_data, table
 
 
@@ -193,18 +203,17 @@ def swap_key_value(param):
 
 
 if __name__ == "__main__":
-    codes = {}
 
-    a_great_sentence = "We are the champions of the world and the space and planet earth"
-
-    print("The size of the data is: {}\n".format(sys.getsizeof(a_great_sentence)))
-    print("The content of the data is: {}\n".format(a_great_sentence))
-    encoded_data, coding_table = huffman_encoding(a_great_sentence)
-    decoding_table = swap_key_value(coding_table)
-    combined = ""
-    for c in encoded_data:
-        combined += c
-    print("The size of the encoded data is: {}\n".format(sys.getsizeof(int(combined, base=2))))
-    print("The content of the encoded data is: {}\n".format(encoded_data))
-    decoded_data = huffman_decoding(decoding_table, encoded_data)
-    print("The decoded of the data is: " + decoded_data)
+    tests = ["D", "DDDDD", "Iam very slow 007", ""]
+    for t in tests:
+        print("The size of the data is : {}\n".format(sys.getsizeof(t)))
+        print("The content of the data is: {}\n".format(t))
+        encoded_data, coding_table = huffman_encoding(t)
+        decoding_table = swap_key_value(coding_table)
+        combined = ""
+        for c in encoded_data:
+            combined += str(c)
+        print("The size of the encoded data is: {}\n".format(sys.getsizeof(int(combined, base=2))))
+        print("The content of the encoded data is: {}\n".format(encoded_data))
+        decoded_data = huffman_decoding(decoding_table, encoded_data)
+        print("Checking decoded of the data is: " + decoded_data)
